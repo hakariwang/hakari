@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parking Lot Status</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+        .parking-lot {
+            display: grid;
+            grid-template-columns: repeat(5, 150px);
+            grid-template-rows: repeat(2, 150px);
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .spot-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .spot {
+            width: 150px;
+            height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            border: 2px solid black;
+        }
+        .residence {
+            background-color: white;
+        }
+        .guest {
+            background-color: green;
+        }
+        .occupied {
+            background-color: red !important;
+        }
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+        }
+        th {
+            background-color: #ddd;
+        }
+        input {
+            width: 100%;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <h1>Parking Lot Status</h1>
+    <div class="parking-lot" id="parkingLot"></div>
+    <h2>Vehicle Information</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Parking Spot</th>
+                <th>Car Number</th>
+                <th>Owner Name</th>
+                <th>Suite Number</th>
+                <th>Mobile</th>
+            </tr>
+        </thead>
+        <tbody id="carInfoTable">
+            <tr>
+                <td><input type="text"></td>
+                <td><input type="text"></td>
+                <td><input type="text"></td>
+                <td><input type="text"></td>
+                <td><input type="text"></td>
+            </tr>
+            <tr>
+                <td><input type="text"></td>
+                <td><input type="text"></td>
+                <td><input type="text"></td>
+                <td><input type="text"></td>
+                <td><input type="text"></td>
+            </tr>
+            <tr>
+                <td><input type="text"></td>
+                <td><input type="text"></td>
+                <td><input type="text"></td>
+                <td><input type="text"></td>
+                <td><input type="text"></td>
+            </tr>
+            <tr>
+                <td><input type="text"></td>
+                <td><input type="text"></td>
+                <td><input type="text"></td>
+                <td><input type="text"></td>
+                <td><input type="text"></td>
+            </tr>
+            <tr>
+                <td><input type="text"></td>
+                <td><input type="text"></td>
+                <td><input type="text"></td>
+                <td><input type="text"></td>
+                <td><input type="text"></td>
+            </tr>
+            <tr>
+                <td><input type="text"></td>
+                <td><input type="text"></td>
+                <td><input type="text"></td>
+                <td><input type="text"></td>
+                <td><input type="text"></td>
+            </tr>
+            <tr>
+                <td><input type="text"></td>
+                <td><input type="text"></td>
+                <td><input type="text"></td>
+                <td><input type="text"></td>
+                <td><input type="text"></td>
+            </tr>
+            <tr>
+                <td><input type="text"></td>
+                <td><input type="text"></td>
+                <td><input type="text"></td>
+                <td><input type="text"></td>
+                <td><input type="text"></td>
+            </tr>
+            <tr>
+                <td><input type="text"></td>
+                <td><input type="text"></td>
+                <td><input type="text"></td>
+                <td><input type="text"></td>
+                <td><input type="text"></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script>
+        const blynkAuth = "rTAuhVVxENpdPFt9mFy1Mh_N6i68hub1";
+        const totalSpots = 10;
+
+        $(document).ready(function() {
+            initParkingLot();
+            fetchParkingStatus();
+            setInterval(fetchParkingStatus, 60000);
+        });
+
+        function initParkingLot() {
+            let lot = "";
+            for (let i = 1; i <= totalSpots; i++) {
+                let type = i <= 6 ? "residence" : "guest";
+                let label = i <= 6 ? "Residence" : "Guest";
+                lot += `<div class='spot-container'>
+                            <span>${label} ${i}</span>
+                            <div class='spot ${type}' id='spot${i}'></div>
+                        </div>`;
+            }
+            $("#parkingLot").html(lot);
+        }
+
+        function fetchParkingStatus() {
+            for (let i = 1; i <= totalSpots; i++) {
+                $.get(`https://blynk.cloud/external/api/get?token=${blynkAuth}&V${i}`, function(status) {
+                    let spot = $(`#spot${i}`);
+                    if (status == "1") {
+                        spot.addClass("occupied");
+                    } else {
+                        spot.removeClass("occupied");
+                    }
+                });
+            }
+        }
+    </script>
+</body>
+</html>
